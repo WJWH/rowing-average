@@ -40,7 +40,8 @@
       };
       connectedServer = null;
       connectedDevice = null;
-      services = null;
+      rowingservice = null;
+      statusCharacteristic = null;
       document.getElementById("btn-alert").addEventListener("click", function(){ 
           let value="borp";
           alert(value + "!"); 
@@ -65,15 +66,26 @@
           })
           .then(server => {
             connectedServer = server;
-            services = connectedServer.getPrimaryService('ce060030-43e5-11e4-916c-0800200c9a66'); //rowing service
-            alert("Connected to" + connectedServer + "!");
+            alert("Connected to" + connectedDevice.name + "!");
             return Promise.resolve();
           })
       });
       document.getElementById("btn-subscribe").addEventListener("click", function(){
-        document.getElementById("output").innerHTML = connectedDevice.name + "<br>Services:" + services;
-        // console.log(connectedServer);
-        // console.log(services);
+        // document.getElementById("output").innerHTML = connectedDevice.name + "<br>Services:" + services;
+        connectedServer.getPrimaryService('ce060030-43e5-11e4-916c-0800200c9a66')
+          .then(service => {
+            rowingservice = service;
+            return service.getCharacteristic('ce060031-43e5-11e4-916c-0800200c9a66'); //lots of magic numbers haha
+          })
+          .then(c => {
+            statusCharacteristic = c;
+            statusCharacteristic.on('characteristicvaluechanged', e => {
+              document.getElementById("output").innerHTML = e;
+            });
+          })
+          .catch(e => {
+            alert("not connected or subscribed");
+          });
       });
     </script> 
 </body>
