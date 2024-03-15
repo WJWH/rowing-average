@@ -23,15 +23,24 @@
               type="submit">
           Scan
       </button>
-
+      <button id="btn-subscribe"
+              class="btn btn-success btn-lg float-right"
+              type="submit">
+          Subscribe
+      </button>
+    <div class="container" id="output">
+      ...
+    </div>
     </div> 
     <script>
       filters = {
-        filters: [{services: ['ce060000-43e5-11e4-916c-0800200c9a66']}],
-        optionalServices: ['ce060010-43e5-11e4-916c-0800200c9a66', 'ce060020-43e5-11e4-916c-0800200c9a66', 'ce060030-43e5-11e4-916c-0800200c9a66']
+        // filters: [{services: ['ce060000-43e5-11e4-916c-0800200c9a66']}],
+        optionalServices: ['device_information', 'ce060010-43e5-11e4-916c-0800200c9a66', 'ce060020-43e5-11e4-916c-0800200c9a66', 'ce060030-43e5-11e4-916c-0800200c9a66'],
+        acceptAllDevices: true
       };
       connectedServer = null;
       connectedDevice = null;
+      services = null;
       document.getElementById("btn-alert").addEventListener("click", function(){ 
           let value="borp";
           alert(value + "!"); 
@@ -45,7 +54,7 @@
           }
       });
       document.getElementById("btn-scan").addEventListener("click", function(){ 
-        return navigator.bluetooth.requestDevice(this.filters)
+        return navigator.bluetooth.requestDevice(filters)
           .then(device => {
             connectedDevice = device;
             // this.device.addEventListener('gattserverdisconnected', () => {
@@ -56,9 +65,15 @@
           })
           .then(server => {
             connectedServer = server;
+            services = connectedServer.getPrimaryService('ce060030-43e5-11e4-916c-0800200c9a66'); //rowing service
             alert("Connected to" + connectedServer + "!");
             return Promise.resolve();
-          });
+          })
+      });
+      document.getElementById("btn-subscribe").addEventListener("click", function(){
+        document.getElementById("output").innerHTML = connectedDevice.name + "<br>Services:" + services;
+        // console.log(connectedServer);
+        // console.log(services);
       });
     </script> 
 </body>
