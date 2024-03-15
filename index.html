@@ -72,16 +72,21 @@
       });
       document.getElementById("btn-subscribe").addEventListener("click", function(){
         // document.getElementById("output").innerHTML = connectedDevice.name + "<br>Services:" + services;
-        connectedServer.getPrimaryService('ce060030-43e5-11e4-916c-0800200c9a66')
+        connectedServer.getPrimaryService('ce060030-43e5-11e4-916c-0800200c9a66') // rowing service
           .then(service => {
             rowingservice = service;
             return service.getCharacteristic('ce060031-43e5-11e4-916c-0800200c9a66'); //lots of magic numbers haha
           })
           .then(c => {
             statusCharacteristic = c;
-            statusCharacteristic.on('characteristicvaluechanged', e => {
+            statusCharacteristic.addEventListener('characteristicvaluechanged', e => {
               document.getElementById("output").innerHTML = e;
             });
+            return statusCharacteristic.startNotifications();
+          })
+          .then(x => {
+            alert("Subscription enabled: " + statusCharacteristic.uuid + "!");
+            return Promise.resolve();
           })
           .catch(e => {
             alert("not connected or subscribed" + e);
