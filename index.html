@@ -7,13 +7,16 @@
 </head>
 <body>
 <h1>borp</h1>
-Available bluetooths in your surroundings:
-
     <div class="container"> 
       <button id="btn-alert"
               class="btn btn-success btn-lg float-right"
               type="submit">
           Borp
+      </button>
+      <button id="btn-available"
+              class="btn btn-success btn-lg float-right"
+              type="submit">
+          Bluetooth available?
       </button>
       <button id="btn-scan"
               class="btn btn-success btn-lg float-right"
@@ -27,9 +30,17 @@ Available bluetooths in your surroundings:
             let value="borp";
             alert(value + "!"); 
         });
+        document.getElementById("btn-available").addEventListener("click", function(){ 
+            if(!navigator.bluetooth){
+              alert("Bluetooth not available!");
+            }
+            else {
+              alert("Should be OK");
+            }
+        });
         document.getElementById("btn-scan").addEventListener("click", function(){ 
             let value="borp";
-            alert(value + "!"); 
+            alert(value + "!");
         });
         navigator.bluetooth.requestDevice(options)
     </script> 
