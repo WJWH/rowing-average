@@ -25,24 +25,41 @@
       </button>
 
     </div> 
-    <script> 
-        document.getElementById("btn-alert").addEventListener("click", function(){ 
-            let value="borp";
-            alert(value + "!"); 
-        });
-        document.getElementById("btn-available").addEventListener("click", function(){ 
-            if(!navigator.bluetooth){
-              alert("Bluetooth not available!");
-            }
-            else {
-              alert("Should be OK");
-            }
-        });
-        document.getElementById("btn-scan").addEventListener("click", function(){ 
-            let value="borp";
-            alert(value + "!");
-        });
-        navigator.bluetooth.requestDevice(options)
+    <script>
+      filters = {
+        filters: [{services: ['ce060000-43e5-11e4-916c-0800200c9a66']}],
+        optionalServices: ['ce060010-43e5-11e4-916c-0800200c9a66', 'ce060020-43e5-11e4-916c-0800200c9a66', 'ce060030-43e5-11e4-916c-0800200c9a66']
+      };
+      connectedServer = null;
+      connectedDevice = null;
+      document.getElementById("btn-alert").addEventListener("click", function(){ 
+          let value="borp";
+          alert(value + "!"); 
+      });
+      document.getElementById("btn-available").addEventListener("click", function(){ 
+          if(!navigator.bluetooth){
+            alert("Bluetooth not available!");
+          }
+          else {
+            alert("Should be OK");
+          }
+      });
+      document.getElementById("btn-scan").addEventListener("click", function(){ 
+        return navigator.bluetooth.requestDevice(this.filters)
+          .then(device => {
+            connectedDevice = device;
+            // this.device.addEventListener('gattserverdisconnected', () => {
+              // this.idObjectMap.clear();
+              // this.eventTarget.dispatchEvent({type: 'disconnect'});
+            // });
+            return device.gatt.connect();
+          })
+          .then(server => {
+            connectedServer = server;
+            alert("Connected to" + connectedServer + "!");
+            return Promise.resolve();
+          });
+      });
     </script> 
 </body>
 </html>
